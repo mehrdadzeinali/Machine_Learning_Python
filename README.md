@@ -42,8 +42,8 @@ Ce dépôt contient une collection de notebooks Jupyter illustrant diverses tech
 12. **`ML0101EN-Reg-Polynomial-Regression-Co2.ipynb`**  
     Application de la régression polynomiale pour modéliser les émissions de CO₂, capturant des relations non linéaires entre les variables.
 
-13. **`ML0101EN-Reg-Simple-Linear-Regression.ipynb`**  
-    Introduction à la régression linéaire simple, démontrant comment modéliser la relation entre deux variables continues.
+13. **`ML0101EN-Reg-Simple-Linear-Regression-Co2.ipynb`**  
+    Application de la régression linéaire simple pour modéliser les émissions de CO₂ en fonction de la consommation de carburant.
 
 
 ### Fichiers de données (`.csv`)
@@ -80,9 +80,3 @@ Ce dépôt contient une collection de notebooks Jupyter illustrant diverses tech
 
 11. **`PolynomialRegressionData.csv`**  
     Jeu de données conçu pour des exercices de régression polynomiale, aidant à modéliser des relations non linéaires.
-
-## Instructions
-
-Pour explorer ces notebooks, il est
-::contentReference[oaicite:3]{index=3}
- 
