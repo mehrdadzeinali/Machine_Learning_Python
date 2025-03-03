@@ -1,6 +1,6 @@
 # Machine Learning en Python
 
-Ce dépôt contient une collection de notebooks Jupyter illustrant diverses techniques d'apprentissage automatique, telles que la classification, la régression, le clustering et les systèmes de recommandation. Chaque notebook est accompagné de jeux de données correspondants au format CSV.&#8203;:contentReference[oaicite:2]{index=2}
+Ce dépôt contient une collection de notebooks Jupyter illustrant diverses techniques d'apprentissage automatique, telles que la classification, la régression, le clustering et les systèmes de recommandation. Chaque notebook est accompagné de jeux de données correspondants au format CSV.
 
 ## Contenu du dépôt
 
