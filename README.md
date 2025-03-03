@@ -60,23 +60,20 @@ Ce dépôt contient une collection de notebooks Jupyter illustrant diverses tech
 4. **`drug200.csv`**  
    Contient des informations sur 200 patients, utilisées pour classifier les types de médicaments appropriés en fonction de caractéristiques telles que l'âge et le sexe.
 
-5. **`cancer.csv`**  
-   Jeu de données relatif au cancer, utilisé pour entraîner des modèles de classification afin de distinguer entre tumeurs malignes et bénignes.
-
-6. **`customer_data.csv`**  
-   Données sur les clients, potentiellement utilisées pour des analyses de segmentation ou de comportement.
-
-7. **`weather.csv`**  
-   Contient des données météorologiques, utilisées pour des analyses de clustering ou de prévision.
-
-8. **`cars.csv`**  
+5. **`cars_clus.csv`**  
    Jeu de données sur les caractéristiques de différentes voitures, utilisé pour des exercices de clustering ou de régression.
 
-9. **`movies.csv`**  
+6. **`movies.csv`**  
    Contient des informations sur des films, telles que les genres et les évaluations, utilisées pour des systèmes de recommandation.
 
-10. **`CO2_emissions.csv`**  
-    Données spécifiques sur les émissions de CO₂, utilisées pour des analyses de régression.
+7. **`cell_samples.csv`**  
+   Contient des échantillons de cellules utilisés pour des exercices de classification, notamment pour distinguer les cellules bénignes des cellules malignes. 
 
-11. **`PolynomialRegressionData.csv`**  
-    Jeu de données conçu pour des exercices de régression polynomiale, aidant à modéliser des relations non linéaires.
+8. **`china_gdp.csv`**  
+   Données sur le PIB de la Chine au fil des ans, utilisées pour des exercices de régression et d'analyse de tendances économiques. 
+
+9. **`teleCust1000t.csv`**  
+   Jeu de données contenant des informations sur les clients d'une entreprise de télécommunications, utilisé pour des exercices de segmentation et de classification. 
+
+10. **`weather-stations20140101-20141231.csv`**  
+    Données météorologiques collectées à partir de différentes stations sur une période donnée, utilisées pour des analyses climatiques et des exercices de clustering. 
