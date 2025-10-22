@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECharts Visualization Builder</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+        :root {
+            --bnp-green-primary: #00915A;
+            --bnp-green-dark: #007348;
+            --bnp-green-light: #39A87B;
+            --bnp-green-lighter: #8BC8AA;
+            --bnp-green-pale: #E8F5EF;
+            --bnp-navy: #002A3A;
+            --bnp-gray: #F5F5F5;
+            --bnp-text: #333333;
+            --bnp-border: #E0E0E0;
+        }
+ 
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bnp-navy) 0%, var(--bnp-green-dark) 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+ 
+        .header {
+            background: white;
+            padding: 20px 40px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+ 
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+ 
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--bnp-green-primary), var(--bnp-green-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+ 
+        .logo-text h1 {
+            font-size: 22px;
+            color: var(--bnp-navy);
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+ 
+        .logo-text p {
+            font-size: 12px;
+            color: var(--bnp-green-primary);
+            font-weight: 500;
+        }
+ 
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 30px;
+            min-height: calc(100vh - 90px);
+        }
+ 
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            height: fit-content;
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+        }
+ 
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+ 
+        .sidebar::-webkit-scrollbar-track {
+            background: var(--bnp-gray);
+            border-radius: 10px;
+        }
+ 
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--bnp-green-primary);
+            border-radius: 10px;
+        }
+ 
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--bnp-navy);
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--bnp-green-pale);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+ 
+        .form-group {
+            margin-bottom: 20px;
+        }
+ 
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--bnp-text);
+            margin-bottom: 8px;
+        }
+ 
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--bnp-border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+            background: white;
+        }
+ 
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--bnp-green-primary);
+            box-shadow: 0 0 0 3px rgba(0, 145, 90, 0.1);
+        }
+ 
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+ 
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+ 
+        .color-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border: 2px solid var(--bnp-border);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+ 
+        .color-input-wrapper:hover {
+            border-color: var(--bnp-green-primary);
+        }
+ 
+        .color-input-wrapper input[type="color"] {
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            padding: 0;
+        }
+ 
+        .color-input-wrapper span {
+            font-size: 11px;
+            color: var(--bnp-text);
+            font-weight: 500;
+        }
+ 
+        .btn-generate {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--bnp-green-primary), var(--bnp-green-light));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 145, 90, 0.3);
+            margin-top: 10px;
+        }
+ 
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 145, 90, 0.4);
+        }
+ 
+        .btn-generate:active {
+            transform: translateY(0);
+        }
+
+        .btn-clear {
+            padding: 8px 12px;
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-clear:hover {
+            background: #d32f2f;
+        }
+
+        .file-status {
+            font-size: 12px;
+            margin-top: 5px;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        .status-success {
+            background: var(--bnp-green-pale);
+            color: var(--bnp-green-dark);
+        }
+
+        .status-error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid var(--bnp-green-pale);
+            border-top: 4px solid var(--bnp-green-primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+ 
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+ 
+        .preview-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+ 
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--bnp-green-pale);
+        }
+ 
+        .preview-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--bnp-navy);
+        }
+ 
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+ 
+        .btn-action {
+            padding: 8px 16px;
+            border: 2px solid var(--bnp-green-primary);
+            background: white;
+            color: var(--bnp-green-primary);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+ 
+        .btn-action:hover {
+            background: var(--bnp-green-primary);
+            color: white;
+        }
+ 
+        #chartPreview {
+            width: 100%;
+            height: 600px;
+            border-radius: 12px;
+        }
+ 
+        .info-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--bnp-green-pale);
+            color: var(--bnp-green-dark);
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+ 
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 42, 58, 0.75);
+            backdrop-filter: blur(4px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+ 
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 0;
+            border: none;
+            width: 90%;
+            max-width: 1000px;
+            border-radius: 16px;
+            max-height: 85vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--bnp-navy) 0%, var(--bnp-green-dark) 100%);
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid var(--bnp-green-primary);
+        }
+
+        .modal-header h2 {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: calc(85vh - 180px);
+            overflow-y: auto;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: var(--bnp-gray);
+            border-radius: 10px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: var(--bnp-green-primary);
+            border-radius: 10px;
+        }
+
+        .modal-footer {
+            background: var(--bnp-gray);
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid var(--bnp-border);
+        }
+ 
+        .close {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            line-height: 1;
+            opacity: 0.9;
+            background: rgba(255, 255, 255, 0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+ 
+        .close:hover,
+        .close:focus {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+ 
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+ 
+        th, td {
+            border: none;
+            padding: 14px 16px;
+            text-align: left;
+        }
+ 
+        th {
+            background: linear-gradient(135deg, var(--bnp-green-primary), var(--bnp-green-light));
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            background: white;
+            border-bottom: 1px solid var(--bnp-border);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: var(--bnp-green-pale);
+        }
+ 
+        table input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px 12px;
+            border: 2px solid var(--bnp-border);
+            border-radius: 6px;
+            font-size: 13px;
+            transition: all 0.3s;
+            background: white;
+            color: var(--bnp-text);
+        }
+
+        table input[type="text"]:focus {
+            outline: none;
+            border-color: var(--bnp-green-primary);
+            box-shadow: 0 0 0 3px rgba(0, 145, 90, 0.1);
+        }
+
+        /* Header inputs - CRITICAL: White text on green gradient headers */
+        #dataTable thead th input[type="text"],
+        #dataTable th input[type="text"],
+        #mapDataTable thead th input[type="text"],
+        #mapDataTable th input[type="text"],
+        thead th input[type="text"],
+        th input[type="text"] {
+            color: white !important;
+            background: rgba(255, 255, 255, 0.2) !important;
+            border: 2px solid rgba(255, 255, 255, 0.3) !important;
+            font-weight: 600 !important;
+            text-transform: uppercase;
+            font-size: 12px;
+        }
+
+        #dataTable thead th input[type="text"]::placeholder,
+        #dataTable th input[type="text"]::placeholder,
+        #mapDataTable thead th input[type="text"]::placeholder,
+        #mapDataTable th input[type="text"]::placeholder,
+        thead th input[type="text"]::placeholder,
+        th input[type="text"]::placeholder {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+
+        #dataTable thead th input[type="text"]:focus,
+        #dataTable th input[type="text"]:focus,
+        #mapDataTable thead th input[type="text"]:focus,
+        #mapDataTable th input[type="text"]:focus,
+        thead th input[type="text"]:focus,
+        th input[type="text"]:focus {
+            background: rgba(255, 255, 255, 0.3) !important;
+            border-color: rgba(255, 255, 255, 0.5) !important;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .data-info {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: var(--bnp-green-pale);
+            border-radius: 10px;
+            border-left: 4px solid var(--bnp-green-primary);
+        }
+
+        .data-info-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--bnp-navy);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .data-info-item span {
+            color: var(--bnp-green-dark);
+            font-weight: 700;
+            font-size: 16px;
+        }
+ 
+        .btn-add-row {
+            margin-top: 10px;
+            padding: 8px 16px;
+            border: 2px solid var(--bnp-green-primary);
+            background: white;
+            color: var(--bnp-green-primary);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+ 
+        .btn-add-row:hover {
+            background: var(--bnp-green-primary);
+            color: white;
+        }
+ 
+        .btn-remove-row {
+            background: #ff4444;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+ 
+        @media (max-width: 1200px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+ 
+            .sidebar {
+                max-height: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <div class="logo-icon">📊</div>
+            <div class="logo-text">
+                <h1>ECharts Visualization Builder</h1>
+                <p>Economic Research Data Visualization Tool</p>
+            </div>
+        </div>
+        <div class="actions">
+            <button class="btn-action" onclick="exportChart()">⬇️ Export</button>
+        </div>
+    </div>
+ 
+    <div class="container">
+        <div class="sidebar">
+            <div class="section-title">📈 Chart Type</div>
+            <div class="form-group">
+                <label>Select Chart Type</label>
+                <select id="chartTypeSelect" onchange="selectChartType(this.value)">
+                    <option value="bar">📊 Bar Chart</option>
+                    <option value="line">📈 Line Chart</option>
+                    <option value="pie">🥧 Pie Chart</option>
+                    <option value="area">📉 Area Chart</option>
+                    <option value="scatter">⚫ Scatter Plot</option>
+                    <option value="radar">🎯 Radar Chart</option>
+                    <option value="heatmap">🔥 Heat Map</option>
+                    <option value="gauge">⏱️ Gauge Chart</option>
+                    <option value="funnel">🔻 Funnel Chart</option>
+                    <option value="candlestick">📊 Candlestick</option>
+                    <option value="boxplot">📦 Box Plot</option>
+                    <option value="map">🗺️ World Map</option>
+                    <option value="donut">🍩 Donut Chart</option>
+                    <option value="stackedbar">📊 Stacked Bar</option>
+                    <option value="stackedarea">📊 Stacked Area</option>
+                    <option value="horizontalbar">▬ Horizontal Bar</option>
+                    <option value="bubble">🫧 Bubble Chart</option>
+                    <option value="treemap">🗂️ Tree Map</option>
+                    <option value="sunburst">☀️ Sunburst</option>
+                    <option value="sankey">🌊 Sankey Flow</option>
+                    <option value="parallel">║ Parallel Coord</option>
+                    <option value="waterfall">📊 Waterfall</option>
+                    <option value="pictorial">🎨 Pictorial Bar</option>
+                    <option value="themeriver">🌊 Theme River</option>
+                </select>
+            </div>
+ 
+            <div class="section-title">⚙️ Configuration</div>
+ 
+            <div class="form-group">
+                <label>Chart Title</label>
+                <input type="text" id="chartTitle" value="Economic Data Visualization" placeholder="Enter chart title">
+            </div>
+ 
+            <div id="standardFields">
+                <div class="form-group">
+                    <label>X-Axis Label</label>
+                    <input type="text" id="xAxisLabel" value="Period" placeholder="X-Axis label">
+                </div>
+ 
+                <div class="form-group">
+                    <label>Y-Axis Label</label>
+                    <input type="text" id="yAxisLabel" value="Value" placeholder="Y-Axis label">
+                </div>
+ 
+                <div class="form-group">
+                    <label>Y-Axis Unit</label>
+                    <select id="yAxisUnit">
+                        <option value="">None</option>
+                        <option value="Dollars ($)">Dollars ($)</option>
+                        <option value="Euros (€)">Euros (€)</option>
+                        <option value="Percentage (%)">Percentage (%)</option>
+                        <option value="Units">Units</option>
+                        <option value="Tons (t)">Tons (t)</option>
+                        <option value="Kilograms (kg)">Kilograms (kg)</option>
+                        <option value="Megawatts (MW)">Megawatts (MW)</option>
+                        <option value="Kilometers (km)">Kilometers (km)</option>
+                    </select>
+                </div>
+ 
+                <div class="form-group">
+                    <label>Y-Axis Max Value</label>
+                    <input type="number" id="yAxisMax" placeholder="Enter max value for Y-Axis">
+                </div>
+ 
+                <div class="form-group">
+                    <label>Upload CSV File</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="file" id="csvFileInput" accept=".csv" onchange="handleFileSelect(event)" style="flex: 1;" />
+                        <button class="btn-clear" onclick="clearCsvFile()" title="Clear file">✕</button>
+                    </div>
+                    <div id="csvFileStatus" style="font-size: 12px; color: var(--bnp-green-primary); margin-top: 5px;"></div>
+                </div>
+ 
+                <button class="btn-action" onclick="openModal()">🔍 Preview Data</button>
+            </div>
+ 
+            <div id="mapFields" style="display: none;">
+                <div class="form-group">
+                    <label>Upload Map Data CSV File</label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="file" id="mapCsvFileInput" accept=".csv" onchange="handleMapFileSelect(event)" style="flex: 1;" />
+                        <button class="btn-clear" onclick="clearMapFile()" title="Clear file">✕</button>
+                    </div>
+                    <div id="mapFileStatus" style="font-size: 12px; color: var(--bnp-green-primary); margin-top: 5px;"></div>
+                </div>
+
+                <button class="btn-action" onclick="openMapModal()">🔍 Preview Data</button>
+            </div>
+ 
+            <div class="section-title">🎨 Colors</div>
+            <div class="color-grid">
+                <div class="color-input-wrapper">
+                    <input type="color" id="color1" value="#00915A">
+                    <span>Primary</span>
+                </div>
+                <div class="color-input-wrapper">
+                    <input type="color" id="color2" value="#39A87B">
+                    <span>Secondary</span>
+                </div>
+                <div class="color-input-wrapper">
+                    <input type="color" id="color3" value="#8BC8AA">
+                    <span>Tertiary</span>
+                </div>
+                <div class="color-input-wrapper">
+                    <input type="color" id="color4" value="#007348">
+                    <span>Accent</span>
+                </div>
+            </div>
+ 
+            <button class="btn-generate" onclick="generateChart()">✨ Generate Visualization</button>
+        </div>
+ 
+        <div class="main-content">
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <div class="preview-title">Preview <span class="info-badge">Apache ECharts</span></div>
+                </div>
+                <div id="chartPreview"></div>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- CSV Data Preview Modal -->
+    <div id="dataModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Data Preview & Editor</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="data-info" id="csvDataInfo" style="display: none;">
+                    <div class="data-info-item">
+                        📄 Columns: <span id="csvColCount">0</span>
+                    </div>
+                    <div class="data-info-item">
+                        📝 Rows: <span id="csvRowCount">0</span>
+                    </div>
+                    <div class="data-info-item">
+                        💾 File: <span id="csvFileName">-</span>
+                    </div>
+                </div>
+                <table id="dataTable">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-add-row" onclick="addRow()">+ Add Row</button>
+                <button class="btn-action" onclick="confirmData()">✓ Confirm & Generate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Data Preview Modal -->
+    <div id="mapDataModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🗺️ Map Data Preview</h2>
+                <span class="close" onclick="closeMapModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="data-info">
+                    <div class="data-info-item">
+                        🌍 Countries: <span id="mapCountryCount">0</span>
+                    </div>
+                    <div class="data-info-item">
+                        💾 File: <span id="mapFileName">-</span>
+                    </div>
+                </div>
+                <table id="mapDataTable">
+                    <thead>
+                        <tr>
+                            <th>Country/Region</th>
+                            <th>Value</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mapTableBody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-add-row" onclick="addMapRow()">+ Add Country</button>
+                <button class="btn-action" onclick="confirmMapData()">✓ Confirm & Generate Map</button>
+            </div>
+        </div>
+    </div>
+ 
+    <script>
+        let currentChart = null;
+        let currentType = 'bar';
+        let chartConfig = {};
+        let csvData = [];
+        let csvHeaders = [];
+        let mapData = [];
+ 
+        function selectChartType(type) {
+            currentType = type;
+ 
+            const standardFields = document.getElementById('standardFields');
+            const mapFields = document.getElementById('mapFields');
+ 
+            if (type === 'map') {
+                standardFields.style.display = 'none';
+                mapFields.style.display = 'block';
+                // Only generate map if we have data
+                if (mapData && mapData.length > 0) {
+                    generateChart();
+                }
+            } else {
+                standardFields.style.display = 'block';
+                mapFields.style.display = 'none';
+                // Only generate chart if we have CSV data
+                if (csvData && csvData.length > 0) {
+                    generateChart();
+                }
+            }
+        }
+ 
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            const statusDiv = document.getElementById('csvFileStatus');
+            
+            if (file) {
+                // Show loading
+                showLoading();
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const text = event.target.result;
+                        // Filter out empty lines before splitting
+                        const rows = text.split('\n').filter(row => row.trim()).map(row => row.split(','));
+                        
+                        if (rows.length < 2) {
+                            throw new Error('File must contain at least a header row and one data row');
+                        }
+                        
+                        const headers = rows[0];
+                        const data = rows.slice(1);
+     
+                        // Store headers separately
+                        csvHeaders = headers.map(h => h.trim());
+                        csvData = data.map(row => row.map(cell => cell.trim()));
+     
+                        const tableHead = document.getElementById('tableHead');
+                        const tableBody = document.getElementById('tableBody');
+     
+                        // Clear previous data
+                        tableHead.innerHTML = '';
+                        tableBody.innerHTML = '';
+     
+                        // Create table headers
+                        const headerRow = document.createElement('tr');
+                        headers.forEach(header => {
+                            const th = document.createElement('th');
+                            const input = document.createElement('input');
+                            input.type = 'text';
+                            input.value = header.trim();
+                            th.appendChild(input);
+                            headerRow.appendChild(th);
+                        });
+                        tableHead.appendChild(headerRow);
+     
+                        // Create table rows
+                        data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            row.forEach(cell => {
+                                const td = document.createElement('td');
+                                const input = document.createElement('input');
+                                input.type = 'text';
+                                input.value = cell.trim();
+                                td.appendChild(input);
+                                tr.appendChild(td);
+                            });
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'btn-remove-row';
+                            removeBtn.textContent = '✕';
+                            removeBtn.onclick = () => removeRow(tr);
+                            tr.appendChild(removeBtn);
+                            tableBody.appendChild(tr);
+                        });
+     
+                        // Update status
+                        statusDiv.innerHTML = `✓ ${file.name} loaded (${data.length} rows)`;
+                        statusDiv.className = 'file-status status-success';
+                        
+                        // Update modal info
+                        document.getElementById('csvColCount').textContent = headers.length;
+                        document.getElementById('csvRowCount').textContent = data.length;
+                        document.getElementById('csvFileName').textContent = file.name;
+                        document.getElementById('csvDataInfo').style.display = 'flex';
+                        
+                        // Hide loading and show the modal
+                        hideLoading();
+                        document.getElementById('dataModal').style.display = 'block';
+                        
+                    } catch (error) {
+                        hideLoading();
+                        statusDiv.innerHTML = `✗ Error: ${error.message}`;
+                        statusDiv.className = 'file-status status-error';
+                        // Reset file input
+                        event.target.value = '';
+                    }
+                };
+                
+                reader.onerror = function() {
+                    hideLoading();
+                    statusDiv.innerHTML = '✗ Error reading file';
+                    statusDiv.className = 'file-status status-error';
+                    event.target.value = '';
+                };
+                
+                reader.readAsText(file);
+            }
+        }
+ 
+        function handleMapFileSelect(event) {
+            const file = event.target.files[0];
+            const statusDiv = document.getElementById('mapFileStatus');
+            
+            if (file) {
+                showLoading();
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const text = event.target.result;
+                        const rows = text.split('\n').filter(row => row.trim()).map(row => row.split(','));
+                        
+                        if (rows.length < 2) {
+                            throw new Error('File must contain at least a header row and one data row');
+                        }
+                        
+                        const data = rows.slice(1).map(row => {
+                            if (row.length < 2) {
+                                throw new Error('Each row must have at least 2 columns (country, value)');
+                            }
+                            return {
+                                name: row[0].trim(),
+                                value: parseFloat(row[1].trim())
+                            };
+                        }).filter(item => item.name && !isNaN(item.value));
+     
+                        if (data.length === 0) {
+                            throw new Error('No valid data found in file');
+                        }
+                        
+                        mapData = data;
+                        
+                        // Update status
+                        statusDiv.innerHTML = `✓ ${file.name} loaded (${data.length} countries)`;
+                        statusDiv.className = 'file-status status-success';
+                        
+                        // Populate map preview table
+                        const tableBody = document.getElementById('mapTableBody');
+                        tableBody.innerHTML = '';
+                        
+                        data.forEach((item, idx) => {
+                            const tr = document.createElement('tr');
+                            
+                            const tdName = document.createElement('td');
+                            const inputName = document.createElement('input');
+                            inputName.type = 'text';
+                            inputName.value = item.name;
+                            inputName.dataset.index = idx;
+                            tdName.appendChild(inputName);
+                            
+                            const tdValue = document.createElement('td');
+                            const inputValue = document.createElement('input');
+                            inputValue.type = 'text';
+                            inputValue.value = item.value;
+                            inputValue.dataset.index = idx;
+                            tdValue.appendChild(inputValue);
+                            
+                            const tdAction = document.createElement('td');
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'btn-remove-row';
+                            removeBtn.textContent = '✕';
+                            removeBtn.onclick = () => removeRow(tr);
+                            tdAction.appendChild(removeBtn);
+                            
+                            tr.appendChild(tdName);
+                            tr.appendChild(tdValue);
+                            tr.appendChild(tdAction);
+                            tableBody.appendChild(tr);
+                        });
+                        
+                        // Update modal info
+                        document.getElementById('mapCountryCount').textContent = data.length;
+                        document.getElementById('mapFileName').textContent = file.name;
+                        
+                        hideLoading();
+                        document.getElementById('mapDataModal').style.display = 'block';
+                        
+                    } catch (error) {
+                        hideLoading();
+                        statusDiv.innerHTML = `✗ Error: ${error.message}`;
+                        statusDiv.className = 'file-status status-error';
+                        event.target.value = '';
+                    }
+                };
+                
+                reader.onerror = function() {
+                    hideLoading();
+                    statusDiv.innerHTML = '✗ Error reading file';
+                    statusDiv.className = 'file-status status-error';
+                    event.target.value = '';
+                };
+                
+                reader.readAsText(file);
+            }
+        }
+ 
+        function openModal() {
+            document.getElementById('dataModal').style.display = 'block';
+        }
+ 
+        function closeModal() {
+            document.getElementById('dataModal').style.display = 'none';
+        }
+ 
+        function addRow() {
+            const tableBody = document.getElementById('tableBody');
+            const newRow = document.createElement('tr');
+            const headers = document.querySelectorAll('#tableHead input');
+ 
+            headers.forEach(() => {
+                const td = document.createElement('td');
+                const input = document.createElement('input');
+                input.type = 'text';
+                td.appendChild(input);
+                newRow.appendChild(td);
+            });
+ 
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'btn-remove-row';
+            removeBtn.textContent = '✕';
+            removeBtn.onclick = () => removeRow(newRow);
+            newRow.appendChild(removeBtn);
+ 
+            tableBody.appendChild(newRow);
+        }
+ 
+        function removeRow(row) {
+            row.parentNode.removeChild(row);
+        }
+ 
+        function confirmData() {
+            const tableHead = document.getElementById('tableHead');
+            const tableBody = document.getElementById('tableBody');
+ 
+            // Update headers
+            const headers = Array.from(tableHead.querySelectorAll('input')).map(input => input.value);
+ 
+            // Update data
+            const data = Array.from(tableBody.querySelectorAll('tr')).map(tr =>
+                Array.from(tr.querySelectorAll('input')).map(input => input.value)
+            );
+ 
+            // Store headers
+            csvHeaders = headers;
+            csvData = data;
+ 
+            // Update categories and series data
+            document.getElementById('xAxisLabel').value = headers[0];
+            document.getElementById('yAxisLabel').value = headers[1];
+ 
+            closeModal();
+            generateChart();
+        }
+ 
+        function generateChart() {
+            const title = document.getElementById('chartTitle').value;
+            const colors = [
+                document.getElementById('color1').value,
+                document.getElementById('color2').value,
+                document.getElementById('color3').value,
+                document.getElementById('color4').value
+            ];
+ 
+            if (currentType === 'map') {
+                generateMapChart(title, colors);
+            } else {
+                generateStandardChart(title, colors);
+            }
+        }
+ 
+        function generateStandardChart(title, colors) {
+            const xLabel = document.getElementById('xAxisLabel').value;
+            const yLabel = document.getElementById('yAxisLabel').value;
+            const yUnit = document.getElementById('yAxisUnit').value;
+            const yMax = document.getElementById('yAxisMax').value;
+            const categories = csvData.map(row => row[0]);
+            // Use headers for series names and include ALL data rows
+            const seriesData = csvHeaders.slice(1).map((header, idx) => ({
+                name: header,
+                data: csvData.map(row => parseFloat(row[idx + 1]))
+            }));
+ 
+            if (!currentChart) {
+                currentChart = echarts.init(document.getElementById('chartPreview'));
+            }
+ 
+            let option = {
+                color: colors,
+                title: {
+                    text: title,
+                    left: 'center',
+                    textStyle: {
+                        fontSize: 22,
+                        fontWeight: 700,
+                        color: '#002A3A'
+                    }
+                },
+                tooltip: {
+                    trigger: currentType === 'pie' || currentType === 'gauge' || currentType === 'funnel' ? 'item' : 'axis',
+                    backgroundColor: 'rgba(0, 42, 58, 0.9)',
+                    borderColor: '#00915A',
+                    borderWidth: 2,
+                    textStyle: { color: '#fff' }
+                },
+                legend: {
+                    bottom: 20,
+                    textStyle: { color: '#333' }
+                },
+                grid: {
+                    left: '10%',
+                    right: '10%',
+                    bottom: '15%',
+                    top: '15%',
+                    containLabel: true
+                }
+            };
+ 
+            switch(currentType) {
+                case 'bar':
+                    option.xAxis = {
+                        type: 'category',
+                        data: categories,
+                        name: xLabel,
+                        nameLocation: 'middle',
+                        nameGap: 35,
+                        nameTextStyle: { fontWeight: 600 },
+                        axisLabel: {
+                            interval: 0,
+                            rotate: 45
+                        }
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        nameLocation: 'middle',
+                        nameGap: 50,
+                        nameTextStyle: { fontWeight: 600 },
+                        max: yMax ? parseFloat(yMax) : null
+                    };
+                    option.series = seriesData.map(s => ({
+                        name: s.name,
+                        type: 'bar',
+                        data: s.data,
+                        barMaxWidth: 60,
+                        itemStyle: {
+                            borderRadius: [4, 4, 0, 0]
+                        }
+                    }));
+                    break;
+ 
+                case 'line':
+                    option.xAxis = {
+                        type: 'category',
+                        data: categories,
+                        name: xLabel,
+                        nameLocation: 'middle',
+                        nameGap: 35,
+                        nameTextStyle: { fontWeight: 600 },
+                        axisLabel: {
+                            interval: 0,
+                            rotate: 45
+                        }
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        nameLocation: 'middle',
+                        nameGap: 50,
+                        nameTextStyle: { fontWeight: 600 },
+                        max: yMax ? parseFloat(yMax) : null
+                    };
+                    option.series = seriesData.map(s => ({
+                        name: s.name,
+                        type: 'line',
+                        data: s.data,
+                        smooth: true,
+                        lineStyle: { width: 3 },
+                        symbol: 'circle',
+                        symbolSize: 8
+                    }));
+                    break;
+ 
+                case 'area':
+                    option.xAxis = {
+                        type: 'category',
+                        data: categories,
+                        boundaryGap: false,
+                        name: xLabel,
+                        nameLocation: 'middle',
+                        nameGap: 35
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        nameLocation: 'middle',
+                        nameGap: 50,
+                        max: yMax ? parseFloat(yMax) : null
+                    };
+                    option.series = seriesData.map(s => ({
+                        name: s.name,
+                        type: 'line',
+                        data: s.data,
+                        smooth: true,
+                        areaStyle: { opacity: 0.5 },
+                        lineStyle: { width: 3 }
+                    }));
+                    break;
+ 
+                case 'pie':
+                    option.series = [{
+                        name: seriesData[0].name,
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        center: ['50%', '50%'],
+                        data: categories.map((cat, idx) => ({
+                            name: cat,
+                            value: seriesData[0].data[idx]
+                        })),
+                        label: {
+                            formatter: '{b}: {c} ({d}%)',
+                            fontSize: 13,
+                            fontWeight: 600
+                        },
+                        itemStyle: {
+                            borderRadius: 8,
+                            borderColor: '#fff',
+                            borderWidth: 3
+                        }
+                    }];
+                    break;
+ 
+                case 'scatter':
+                    option.xAxis = {
+                        type: 'value',
+                        name: xLabel,
+                        nameLocation: 'middle',
+                        nameGap: 35
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        nameLocation: 'middle',
+                        nameGap: 50,
+                        max: yMax ? parseFloat(yMax) : null
+                    };
+                    option.series = seriesData.map(s => ({
+                        name: s.name,
+                        type: 'scatter',
+                        data: s.data.map((val, idx) => [idx + 1, val]),
+                        symbolSize: 15
+                    }));
+                    break;
+ 
+                case 'radar':
+                    option.radar = {
+                        indicator: categories.map(cat => ({ name: cat, max: Math.max(...seriesData.flatMap(s => s.data)) * 1.2 })),
+                        shape: 'circle',
+                        splitNumber: 5,
+                        name: { textStyle: { color: '#333', fontSize: 12 } },
+                        splitLine: { lineStyle: { color: '#E0E0E0' } },
+                        splitArea: { show: true, areaStyle: { color: ['rgba(0, 145, 90, 0.05)', 'rgba(0, 145, 90, 0.1)'] } }
+                    };
+                    option.series = [{
+                        name: title,
+                        type: 'radar',
+                        data: seriesData.map(s => ({
+                            value: s.data,
+                            name: s.name
+                        }))
+                    }];
+                    break;
+ 
+                case 'heatmap':
+                    option.xAxis = {
+                        type: 'category',
+                        data: categories,
+                        splitArea: { show: true }
+                    };
+                    option.yAxis = {
+                        type: 'category',
+                        data: seriesData.map(s => s.name),
+                        splitArea: { show: true }
+                    };
+                    option.visualMap = {
+                        min: 0,
+                        max: Math.max(...seriesData.flatMap(s => s.data)),
+                        calculable: true,
+                        orient: 'horizontal',
+                        left: 'center',
+                        bottom: 10,
+                        inRange: {
+                            color: [colors[0], colors[1], colors[2]]
+                        }
+                    };
+                    const heatmapData = [];
+                    seriesData.forEach((s, yIdx) => {
+                        s.data.forEach((val, xIdx) => {
+                            heatmapData.push([xIdx, yIdx, val]);
+                        });
+                    });
+                    option.series = [{
+                        name: title,
+                        type: 'heatmap',
+                        data: heatmapData,
+                        label: {
+                            show: true,
+                            fontSize: 12,
+                            fontWeight: 600
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }];
+                    break;
+ 
+                case 'gauge':
+                    option.series = [{
+                        type: 'gauge',
+                        center: ['50%', '60%'],
+                        startAngle: 200,
+                        endAngle: -20,
+                        min: 0,
+                        max: 100,
+                        splitNumber: 10,
+                        itemStyle: {
+                            color: colors[0]
+                        },
+                        progress: {
+                            show: true,
+                            width: 30
+                        },
+                        pointer: {
+                            show: true,
+                            length: '60%',
+                            width: 8
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                width: 30
+                            }
+                        },
+                        axisTick: {
+                            distance: -35,
+                            splitNumber: 5,
+                            lineStyle: {
+                                width: 2,
+                                color: '#999'
+                            }
+                        },
+                        splitLine: {
+                            distance: -40,
+                            length: 14,
+                            lineStyle: {
+                                width: 3,
+                                color: '#999'
+                            }
+                        },
+                        axisLabel: {
+                            distance: -25,
+                            color: '#999',
+                            fontSize: 14
+                        },
+                        anchor: {
+                            show: false
+                        },
+                        title: {
+                            show: true,
+                            offsetCenter: [0, '80%'],
+                            fontSize: 16,
+                            fontWeight: 600
+                        },
+                        detail: {
+                            valueAnimation: true,
+                            width: '60%',
+                            lineHeight: 40,
+                            borderRadius: 8,
+                            offsetCenter: [0, '10%'],
+                            fontSize: 40,
+                            fontWeight: 'bold',
+                            formatter: '{value}%',
+                            color: colors[0]
+                        },
+                        data: [{
+                            value: seriesData[0].data[0],
+                            name: seriesData[0].name
+                        }]
+                    }];
+                    break;
+ 
+                case 'funnel':
+                    option.series = [{
+                        name: title,
+                        type: 'funnel',
+                        left: '10%',
+                        top: 60,
+                        bottom: 60,
+                        width: '80%',
+                        min: 0,
+                        max: 100,
+                        minSize: '0%',
+                        maxSize: '100%',
+                        sort: 'descending',
+                        gap: 2,
+                        label: {
+                            show: true,
+                            position: 'inside',
+                            fontSize: 14,
+                            fontWeight: 600
+                        },
+                        labelLine: {
+                            length: 10,
+                            lineStyle: {
+                                width: 1
+                            }
+                        },
+                        itemStyle: {
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        emphasis: {
+                            label: {
+                                fontSize: 16
+                            }
+                        },
+                        data: categories.map((cat, idx) => ({
+                            value: seriesData[0].data[idx],
+                            name: cat
+                        })).sort((a, b) => b.value - a.value)
+                    }];
+                    break;
+ 
+                case 'candlestick':
+                    option.xAxis = {
+                        type: 'category',
+                        data: categories,
+                        scale: true,
+                        boundaryGap: true,
+                        axisLine: { onZero: false },
+                        splitLine: { show: false },
+                        min: 'dataMin',
+                        max: 'dataMax'
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        scale: true,
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        splitArea: { show: true }
+                    };
+                    const candleData = seriesData[0].data.map((val, idx) => {
+                        const open = val;
+                        const close = seriesData[1] ? seriesData[1].data[idx] : val * 1.1;
+                        const low = Math.min(open, close) * 0.95;
+                        const high = Math.max(open, close) * 1.05;
+                        return [open, close, low, high];
+                    });
+                    option.series = [{
+                        name: title,
+                        type: 'candlestick',
+                        data: candleData,
+                        itemStyle: {
+                            color: colors[0],
+                            color0: colors[1],
+                            borderColor: colors[0],
+                            borderColor0: colors[1]
+                        }
+                    }];
+                    break;
+ 
+                case 'boxplot':
+                    option.xAxis = {
+                        type: 'category',
+                        data: categories,
+                        boundaryGap: true,
+                        nameGap: 30,
+                        splitArea: { show: false },
+                        splitLine: { show: false }
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        splitArea: { show: true }
+                    };
+                    const boxData = seriesData[0].data.map(val => {
+                        const min = val * 0.8;
+                        const q1 = val * 0.9;
+                        const median = val;
+                        const q3 = val * 1.1;
+                        const max = val * 1.2;
+                        return [min, q1, median, q3, max];
+                    });
+                    option.series = [{
+                        name: seriesData[0].name,
+                        type: 'boxplot',
+                        data: boxData,
+                        itemStyle: {
+                            color: colors[0],
+                            borderColor: colors[3]
+                        }
+                    }];
+                    break;
+ 
+                case 'donut':
+                    option.series = [{
+                        name: seriesData[0].name,
+                        type: 'pie',
+                        radius: ['50%', '75%'],
+                        center: ['50%', '50%'],
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 10,
+                            borderColor: '#fff',
+                            borderWidth: 3
+                        },
+                        label: {
+                            show: true,
+                            position: 'outside',
+                            formatter: '{b}: {c} ({d}%)',
+                            fontSize: 13,
+                            fontWeight: 600
+                        },
+                        emphasis: {
+                            label: {
+                                show: true,
+                                fontSize: 16,
+                                fontWeight: 'bold'
+                            }
+                        },
+                        data: categories.map((cat, idx) => ({
+                            name: cat,
+                            value: seriesData[0].data[idx]
+                        }))
+                    }];
+                    break;
+ 
+                case 'stackedbar':
+                    option.xAxis = {
+                        type: 'category',
+                        data: categories,
+                        name: xLabel
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        max: yMax ? parseFloat(yMax) : null
+                    };
+                    option.series = seriesData.map(s => ({
+                        name: s.name,
+                        type: 'bar',
+                        stack: 'total',
+                        data: s.data,
+                        barMaxWidth: 60,
+                        itemStyle: {
+                            borderRadius: [0, 0, 0, 0]
+                        }
+                    }));
+                    option.series[option.series.length - 1].itemStyle.borderRadius = [4, 4, 0, 0];
+                    break;
+ 
+                case 'stackedarea':
+                    option.xAxis = {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: categories,
+                        name: xLabel
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        max: yMax ? parseFloat(yMax) : null
+                    };
+                    option.series = seriesData.map(s => ({
+                        name: s.name,
+                        type: 'line',
+                        stack: 'Total',
+                        areaStyle: {},
+                        emphasis: {
+                            focus: 'series'
+                        },
+                        data: s.data,
+                        smooth: true
+                    }));
+                    break;
+ 
+                case 'horizontalbar':
+                    option.yAxis = {
+                        type: 'category',
+                        data: categories,
+                        name: xLabel
+                    };
+                    option.xAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        max: yMax ? parseFloat(yMax) : null
+                    };
+                    option.series = seriesData.map(s => ({
+                        name: s.name,
+                        type: 'bar',
+                        data: s.data,
+                        barMaxWidth: 40,
+                        itemStyle: {
+                            borderRadius: [0, 4, 4, 0]
+                        }
+                    }));
+                    break;
+ 
+                case 'bubble':
+                    option.xAxis = {
+                        type: 'value',
+                        name: xLabel,
+                        splitLine: { show: true }
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        splitLine: { show: true },
+                        max: yMax ? parseFloat(yMax) : null
+                    };
+                    option.series = seriesData.map(s => ({
+                        name: s.name,
+                        type: 'scatter',
+                        symbolSize: val => Math.sqrt(val[2]) * 10,
+                        data: s.data.map((val, idx) => [idx + 1, val, val * 2]),
+                        emphasis: {
+                            focus: 'series',
+                            label: {
+                                show: true,
+                                formatter: params => params.data[2],
+                                position: 'top'
+                            }
+                        }
+                    }));
+                    break;
+ 
+                case 'treemap':
+                    option.series = [{
+                        type: 'treemap',
+                        data: categories.map((cat, idx) => ({
+                            name: cat,
+                            value: seriesData[0].data[idx]
+                        })),
+                        label: {
+                            show: true,
+                            formatter: '{b}\n{c}',
+                            fontSize: 13,
+                            fontWeight: 600
+                        },
+                        itemStyle: {
+                            borderColor: '#fff',
+                            borderWidth: 2,
+                            gapWidth: 2
+                        },
+                        levels: [
+                            {
+                                itemStyle: {
+                                    borderColor: '#333',
+                                    borderWidth: 4,
+                                    gapWidth: 4
+                                }
+                            }
+                        ]
+                    }];
+                    break;
+ 
+                case 'sunburst':
+                    const sunburstData = [{
+                        name: title,
+                        children: categories.map((cat, idx) => ({
+                            name: cat,
+                            value: seriesData[0].data[idx],
+                            children: seriesData.slice(1).map(s => ({
+                                name: s.name,
+                                value: s.data[idx] || seriesData[0].data[idx] * 0.3
+                            }))
+                        }))
+                    }];
+                    option.series = [{
+                        type: 'sunburst',
+                        data: sunburstData,
+                        radius: [0, '90%'],
+                        label: {
+                            rotate: 'radial',
+                            fontSize: 12,
+                            fontWeight: 600
+                        },
+                        itemStyle: {
+                            borderRadius: 7,
+                            borderWidth: 2,
+                            borderColor: '#fff'
+                        }
+                    }];
+                    break;
+ 
+                case 'sankey':
+                    const sankeyNodes = [];
+                    const sankeyLinks = [];
+                    categories.forEach((cat, idx) => {
+                        sankeyNodes.push({ name: cat });
+                        if (idx < categories.length - 1) {
+                            sankeyLinks.push({
+                                source: cat,
+                                target: categories[idx + 1],
+                                value: seriesData[0].data[idx]
+                            });
+                        }
+                    });
+                    option.series = [{
+                        type: 'sankey',
+                        layout: 'none',
+                        emphasis: {
+                            focus: 'adjacency'
+                        },
+                        data: sankeyNodes,
+                        links: sankeyLinks,
+                        lineStyle: {
+                            color: 'gradient',
+                            curveness: 0.5
+                        },
+                        label: {
+                            fontSize: 12,
+                            fontWeight: 600
+                        }
+                    }];
+                    break;
+ 
+                case 'parallel':
+                    option.parallelAxis = categories.map((cat, idx) => ({
+                        dim: idx,
+                        name: cat,
+                        max: Math.max(...seriesData.flatMap(s => s.data)) * 1.2
+                    }));
+                    option.parallel = {
+                        left: '10%',
+                        right: '15%',
+                        bottom: 100,
+                        parallelAxisDefault: {
+                            type: 'value',
+                            nameLocation: 'end',
+                            nameGap: 20,
+                            nameTextStyle: {
+                                fontSize: 12,
+                                fontWeight: 600
+                            }
+                        }
+                    };
+                    option.series = [{
+                        type: 'parallel',
+                        lineStyle: {
+                            width: 3,
+                            opacity: 0.5
+                        },
+                        data: seriesData.map(s => s.data)
+                    }];
+                    break;
+ 
+                case 'waterfall':
+                    let sum = 0;
+                    const waterfallData = seriesData[0].data.map((val, idx) => {
+                        const start = sum;
+                        sum += val;
+                        return {
+                            name: categories[idx],
+                            value: sum,
+                            itemStyle: {
+                                color: val >= 0 ? colors[0] : colors[3]
+                            }
+                        };
+                    });
+                    option.xAxis = {
+                        type: 'category',
+                        data: categories,
+                        name: xLabel
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        max: yMax ? parseFloat(yMax) : null
+                    };
+                    option.series = [{
+                        type: 'bar',
+                        data: waterfallData,
+                        barMaxWidth: 60,
+                        itemStyle: {
+                            borderRadius: [4, 4, 0, 0]
+                        }
+                    }];
+                    break;
+ 
+                case 'pictorial':
+                    option.xAxis = {
+                        type: 'category',
+                        data: categories,
+                        name: xLabel,
+                        axisTick: { show: false }
+                    };
+                    option.yAxis = {
+                        type: 'value',
+                        name: yLabel + (yUnit ? ` (${yUnit})` : ''),
+                        max: yMax ? parseFloat(yMax) : null
+                    };
+                    option.series = [{
+                        name: seriesData[0].name,
+                        type: 'pictorialBar',
+                        symbol: 'circle',
+                        symbolRepeat: true,
+                        symbolSize: ['80%', 10],
+                        symbolMargin: 2,
+                        data: seriesData[0].data,
+                        itemStyle: {
+                            color: colors[0]
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                color: colors[1]
+                            }
+                        }
+                    }];
+                    break;
+ 
+                case 'themeriver':
+                    const themeRiverData = [];
+                    seriesData.forEach((s, sIdx) => {
+                        s.data.forEach((val, idx) => {
+                            themeRiverData.push([categories[idx], val, s.name]);
+                        });
+                    });
+                    option.singleAxis = {
+                        type: 'category',
+                        data: categories,
+                        top: 50,
+                        bottom: 50,
+                        axisTick: {},
+                        axisLabel: {},
+                        axisLine: { lineStyle: { color: '#008acd' } },
+                        splitLine: { show: true }
+                    };
+                    option.series = [{
+                        type: 'themeRiver',
+                        data: themeRiverData,
+                        label: {
+                            show: true,
+                            fontSize: 11,
+                            fontWeight: 600
+                        },
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 20,
+                                shadowColor: 'rgba(0, 0, 0, 0.8)'
+                            }
+                        }
+                    }];
+                    break;
+            }
+ 
+            chartConfig = option;
+            currentChart.setOption(option, true);
+            window.addEventListener('resize', () => currentChart.resize());
+        }
+ 
+        function generateMapChart(title, colors) {
+            if (!currentChart) {
+                currentChart = echarts.init(document.getElementById('chartPreview'));
+            }
+
+            // Check if we have map data
+            if (!mapData || mapData.length === 0) {
+                alert('No map data available. Please upload a map data file first.');
+                return;
+            }
+
+            showLoading();
+ 
+            // Use GeoJSON instead of TopoJSON for better compatibility
+            fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load map data from server');
+                    }
+                    return response.json();
+                })
+                .then(geoJson => {
+                    echarts.registerMap('world', geoJson);
+ 
+                    const option = {
+                        title: {
+                            text: title,
+                            left: 'center',
+                            top: 20,
+                            textStyle: {
+                                fontSize: 22,
+                                fontWeight: 700,
+                                color: '#002A3A'
+                            }
+                        },
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: params => {
+                                return `<strong>${params.name}</strong><br/>Value: ${params.value || 'No data'}`;
+                            },
+                            backgroundColor: 'rgba(0, 42, 58, 0.9)',
+                            borderColor: '#00915A',
+                            borderWidth: 2,
+                            textStyle: { color: '#fff' }
+                        },
+                        visualMap: {
+                            min: 0,
+                            max: Math.max(...mapData.map(d => d.value)),
+                            text: ['High', 'Low'],
+                            realtime: false,
+                            calculable: true,
+                            inRange: {
+                                color: colors
+                            },
+                            left: 'left',
+                            bottom: 40,
+                            textStyle: {
+                                color: '#333'
+                            }
+                        },
+                        series: [{
+                            name: title,
+                            type: 'map',
+                            map: 'world',
+                            roam: true,
+                            scaleLimit: {
+                                min: 1,
+                                max: 5
+                            },
+                            itemStyle: {
+                                borderColor: '#333',
+                                borderWidth: 0.5,
+                                areaColor: '#f0f0f0'
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    areaColor: colors[0],
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowOffsetY: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                },
+                                label: {
+                                    show: true,
+                                    color: '#fff',
+                                    fontWeight: 600
+                                }
+                            },
+                            data: mapData
+                        }]
+                    };
+ 
+                    chartConfig = option;
+                    currentChart.setOption(option, true);
+                    window.addEventListener('resize', () => currentChart.resize());
+                    hideLoading();
+                })
+                .catch(err => {
+                    hideLoading();
+                    console.error('Map loading error:', err);
+                    alert('Error loading map data. Please check your internet connection and try again.\n\nError: ' + err.message);
+                });
+        }
+ 
+        function exportChart() {
+            if (!currentChart) return;
+ 
+            const url = currentChart.getDataURL({
+                type: 'png',
+                pixelRatio: 2,
+                backgroundColor: '#fff'
+            });
+ 
+            const link = document.createElement('a');
+            link.download = 'chart.png';
+            link.href = url;
+            link.click();
+        }
+ 
+        // Generate initial chart
+        generateChart();
+
+        // Helper functions for loading state
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        // Function to clear CSV file
+        function clearCsvFile() {
+            const fileInput = document.getElementById('csvFileInput');
+            const statusDiv = document.getElementById('csvFileStatus');
+            
+            fileInput.value = '';
+            csvData = [];
+            csvHeaders = [];
+            statusDiv.innerHTML = '';
+            statusDiv.className = '';
+            
+            // Clear table
+            document.getElementById('tableHead').innerHTML = '';
+            document.getElementById('tableBody').innerHTML = '';
+            
+            alert('CSV file cleared. You can now upload a new file.');
+        }
+
+        // Function to clear map file
+        function clearMapFile() {
+            const fileInput = document.getElementById('mapCsvFileInput');
+            const statusDiv = document.getElementById('mapFileStatus');
+            
+            fileInput.value = '';
+            mapData = [];
+            statusDiv.innerHTML = '';
+            statusDiv.className = '';
+            
+            document.getElementById('mapTableBody').innerHTML = '';
+            
+            alert('Map file cleared. You can now upload a new file.');
+        }
+
+        // Close map modal
+        function closeMapModal() {
+            document.getElementById('mapDataModal').style.display = 'none';
+        }
+
+        // Confirm map data
+        function confirmMapData() {
+            const tableBody = document.getElementById('mapTableBody');
+            const rows = tableBody.querySelectorAll('tr');
+            
+            mapData = Array.from(rows).map(tr => {
+                const inputs = tr.querySelectorAll('input');
+                return {
+                    name: inputs[0].value.trim(),
+                    value: parseFloat(inputs[1].value)
+                };
+            }).filter(item => item.name && !isNaN(item.value));
+            
+            closeMapModal();
+            generateChart();
+        }
+
+        // Open map modal
+        function openMapModal() {
+            if (mapData.length === 0) {
+                alert('Please upload a map data file first!');
+                return;
+            }
+            
+            // Populate map preview table
+            const tableBody = document.getElementById('mapTableBody');
+            tableBody.innerHTML = '';
+            
+            mapData.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                
+                const tdName = document.createElement('td');
+                const inputName = document.createElement('input');
+                inputName.type = 'text';
+                inputName.value = item.name;
+                inputName.dataset.index = idx;
+                tdName.appendChild(inputName);
+                
+                const tdValue = document.createElement('td');
+                const inputValue = document.createElement('input');
+                inputValue.type = 'text';
+                inputValue.value = item.value;
+                inputValue.dataset.index = idx;
+                tdValue.appendChild(inputValue);
+                
+                const tdAction = document.createElement('td');
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'btn-remove-row';
+                removeBtn.textContent = '✕';
+                removeBtn.onclick = () => removeRow(tr);
+                tdAction.appendChild(removeBtn);
+                
+                tr.appendChild(tdName);
+                tr.appendChild(tdValue);
+                tr.appendChild(tdAction);
+                tableBody.appendChild(tr);
+            });
+            
+            // Update modal info
+            document.getElementById('mapCountryCount').textContent = mapData.length;
+            document.getElementById('mapFileName').textContent = 'Current data';
+            
+            document.getElementById('mapDataModal').style.display = 'block';
+        }
+
+        // Add map row
+        function addMapRow() {
+            const tableBody = document.getElementById('mapTableBody');
+            const tr = document.createElement('tr');
+            
+            const tdName = document.createElement('td');
+            const inputName = document.createElement('input');
+            inputName.type = 'text';
+            inputName.placeholder = 'Country name';
+            tdName.appendChild(inputName);
+            
+            const tdValue = document.createElement('td');
+            const inputValue = document.createElement('input');
+            inputValue.type = 'text';
+            inputValue.placeholder = 'Value';
+            tdValue.appendChild(inputValue);
+            
+            const tdAction = document.createElement('td');
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'btn-remove-row';
+            removeBtn.textContent = '✕';
+            removeBtn.onclick = () => removeRow(tr);
+            tdAction.appendChild(removeBtn);
+            
+            tr.appendChild(tdName);
+            tr.appendChild(tdValue);
+            tr.appendChild(tdAction);
+            tableBody.appendChild(tr);
+            
+            // Update count
+            document.getElementById('mapCountryCount').textContent = tableBody.querySelectorAll('tr').length;
+        }
+    </script>
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p style="color: var(--bnp-navy); font-weight: 600;">Loading...</p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+</body>
+</html>
